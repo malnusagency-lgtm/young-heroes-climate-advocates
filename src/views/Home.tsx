@@ -24,7 +24,7 @@ import {
 import { ROUTES } from '../config/routes';
 import { ORG } from '../config/constants';
 import { useGallery, INITIAL_FALLBACK_ITEMS, sanitizeItem } from '../hooks/useGallery';
-import { useEvents } from '../hooks/useEvents';
+import { isUpcomingEvent, sortEventsByDate, useEvents } from '../hooks/useEvents';
 import { GalleryItem, EventItem } from '../types';
 
 export default function Home() {
@@ -39,7 +39,13 @@ export default function Home() {
 
   useEffect(() => {
     fetchFeaturedGallery().then(setFeaturedPhotos);
-    fetchAllEvents().then((evs) => setEventsList(evs.slice(0, 3)));
+    fetchAllEvents()
+      .then((evs) =>
+        setEventsList(
+          sortEventsByDate(evs.filter((event) => event.is_published !== false && isUpcomingEvent(event))).slice(0, 3)
+        )
+      )
+      .catch((error) => console.error('Could not load upcoming events:', error));
   }, [fetchFeaturedGallery, fetchAllEvents]);
 
   // Lock scroll & handle Esc key when photo is opened
@@ -599,7 +605,7 @@ export default function Home() {
                   <h3 style={{ fontSize: '1.15rem', marginBottom: '0.8rem', fontWeight: 800 }}>{event.title}</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', color: 'var(--color-text-light)', fontSize: '0.85rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <Calendar size={14} /> {event.year || '2026'}
+                      <Calendar size={14} /> {event.year}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <MapPin size={14} /> {event.location}

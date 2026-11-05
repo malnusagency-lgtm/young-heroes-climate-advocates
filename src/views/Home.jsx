@@ -24,17 +24,30 @@ import {
 import { ROUTES } from '../config/routes';
 import { ORG } from '../config/constants';
 import { useGallery, INITIAL_FALLBACK_ITEMS, sanitizeItem } from '../hooks/useGallery';
+import { isUpcomingEvent, sortEventsByDate, useEvents } from '../hooks/useEvents';
 
 export default function Home() {
   const { fetchFeaturedGallery } = useGallery();
+  const { fetchAllEvents } = useEvents();
   const [featuredPhotos, setFeaturedPhotos] = useState(() =>
     INITIAL_FALLBACK_ITEMS.filter((i) => i.is_featured).map(sanitizeItem)
   );
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   useEffect(() => {
     fetchFeaturedGallery().then(setFeaturedPhotos);
   }, [fetchFeaturedGallery]);
+
+  useEffect(() => {
+    fetchAllEvents()
+      .then((events) =>
+        setUpcomingEvents(
+          sortEventsByDate(events.filter((event) => event.is_published !== false && isUpcomingEvent(event))).slice(0, 3)
+        )
+      )
+      .catch((error) => console.error('Could not load upcoming events:', error));
+  }, [fetchAllEvents]);
 
   // Lock scroll & handle Esc key when photo is opened
   useEffect(() => {
@@ -52,33 +65,6 @@ export default function Home() {
       document.body.style.overflow = '';
     }
   }, [selectedPhoto]);
-
-  const upcomingEvents = [
-    {
-      date: 'Jan 28',
-      month: '2026',
-      title: 'Nairobi Reforestation Workshop',
-      location: 'Karura Forest, Nairobi',
-      type: 'Field Action',
-      color: '#0F4C3A',
-    },
-    {
-      date: 'Feb 12',
-      month: '2026',
-      title: 'Youth Policy Summit',
-      location: 'Kenyatta ICC',
-      type: 'Advocacy',
-      color: '#2E86AB',
-    },
-    {
-      date: 'Mar 05',
-      month: '2026',
-      title: 'Eco-Literacy School Tour',
-      location: 'Mombasa County',
-      type: 'Education',
-      color: '#F4D35E',
-    },
-  ];
 
   // 8 Verified Voices of Impact Testimonials
   const testimonials = [
@@ -613,8 +599,8 @@ export default function Home() {
                 }}
               >
                 <div style={{ textAlign: 'center', color: event.color, flexShrink: 0 }}>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 900, lineHeight: 1 }}>{event.date.split(' ')[1]}</div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase' }}>{event.date.split(' ')[0]}</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 900, lineHeight: 1 }}>{event.date}</div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase' }}>{event.month}</div>
                 </div>
 
                 <div>
@@ -624,7 +610,7 @@ export default function Home() {
                   <h3 style={{ fontSize: '1.15rem', marginBottom: '0.8rem', fontWeight: 800 }}>{event.title}</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', color: 'var(--color-text-light)', fontSize: '0.85rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <Calendar size={14} /> {event.month}
+                      <Calendar size={14} /> {event.year}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <MapPin size={14} /> {event.location}

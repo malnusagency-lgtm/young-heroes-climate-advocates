@@ -1,65 +1,31 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Calendar as CalendarIcon, MapPin, Clock, ChevronRight, Info, AlertCircle } from 'lucide-react';
 import { ROUTES } from '../config/routes';
-
-const allEvents = [
-  {
-    id: 1,
-    date: "28",
-    month: "JAN",
-    year: "2026",
-    title: "Nairobi Reforestation Workshop",
-    location: "Karura Forest, Nairobi",
-    time: "09:00 AM - 01:00 PM",
-    type: "Field Action",
-    desc: "Join us for a hands-on workshop on indigenous tree planting and nursery management.",
-    color: "#0F4C3A",
-  },
-  {
-    id: 2,
-    date: "12",
-    month: "FEB",
-    year: "2026",
-    title: "Youth Policy Summit",
-    location: "Kenyatta ICC",
-    time: "10:00 AM - 04:00 PM",
-    type: "Advocacy",
-    desc: "A strategic gathering to discuss the Youth Climate Bill before the regional assembly.",
-    color: "#2E86AB",
-  },
-  {
-    id: 3,
-    date: "05",
-    month: "MAR",
-    year: "2026",
-    title: "Eco-Literacy School Tour",
-    location: "Mombasa County",
-    time: "08:30 AM - 02:00 PM",
-    type: "Education",
-    desc: "Visiting regional schools to launch the 2026 Climate Champions program.",
-    color: "#F4D35E",
-  },
-  {
-    id: 4,
-    date: "20",
-    month: "MAR",
-    year: "2026",
-    title: "Coastal Resilience Workshop",
-    location: "Malindi Waterfront",
-    time: "09:00 AM - 12:00 PM",
-    type: "Field Action",
-    desc: "Community seagrass monitoring and coastline protection training session.",
-    color: "#0F4C3A",
-  },
-];
+import { isUpcomingEvent, sortEventsByDate, useEvents } from '../hooks/useEvents';
 
 export default function Events() {
+  const { fetchAllEvents } = useEvents();
+  const [events, setEvents] = useState([]);
+  const [loadError, setLoadError] = useState(null);
   const [filter, setFilter] = useState('All');
 
-  const filteredEvents = allEvents.filter((ev) => filter === 'All' || ev.type === filter);
+  useEffect(() => {
+    fetchAllEvents()
+      .then(setEvents)
+      .catch((error) => setLoadError(error instanceof Error ? error.message : 'Could not load events.'));
+  }, [fetchAllEvents]);
+
+  const filteredEvents = sortEventsByDate(
+    events.filter(
+      (event) =>
+        event.is_published !== false &&
+        isUpcomingEvent(event) &&
+        (filter === 'All' || event.type === filter)
+    )
+  );
 
   return (
     <div
@@ -130,6 +96,11 @@ export default function Events() {
         </div>
 
         {/* Events Listing */}
+        {loadError && (
+          <p role="alert" style={{ textAlign: 'center', color: '#b91c1c', marginBottom: '1.5rem' }}>
+            Could not load events. Please try again later.
+          </p>
+        )}
         <div style={{ display: 'grid', gap: '2rem', maxWidth: '900px', margin: '0 auto' }}>
           {filteredEvents.map((ev) => (
             <div

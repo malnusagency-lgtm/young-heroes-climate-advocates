@@ -66,12 +66,40 @@ create policy "Admins can delete events"
     )
   );
 
+with event_defaults (id, month_number, day_number, title, location, time, type, description, color) as (
+  values
+    (1, 12, 15, 'Nairobi Reforestation Workshop', 'Karura Forest, Nairobi', '09:00 AM - 01:00 PM', 'Field Action', 'Join us for a hands-on workshop on indigenous tree planting and nursery management.', '#0F4C3A'),
+    (2, 1, 12, 'Youth Policy Summit', 'Kenyatta ICC', '10:00 AM - 04:00 PM', 'Advocacy', 'A strategic gathering to discuss the Youth Climate Bill before the regional assembly.', '#2E86AB'),
+    (3, 2, 5, 'Eco-Literacy School Tour', 'Mombasa County', '08:30 AM - 02:00 PM', 'Education', 'Visiting regional schools to launch the Climate Champions program.', '#F4D35E'),
+    (4, 3, 20, 'Coastal Resilience Workshop', 'Malindi Waterfront', '09:00 AM - 12:00 PM', 'Field Action', 'Community seagrass monitoring and coastline protection training session.', '#0F4C3A')
+),
+dated_events as (
+  select event_defaults.*,
+    make_date(
+      extract(year from current_date)::integer +
+        case
+          when make_date(extract(year from current_date)::integer, month_number, day_number) < current_date then 1
+          else 0
+        end,
+      month_number,
+      day_number
+    ) as event_date
+  from event_defaults
+)
 insert into public.events (id, date, month, year, title, location, time, type, "desc", color, is_published)
-values
-  (1, '28', 'JAN', '2026', 'Nairobi Reforestation Workshop', 'Karura Forest, Nairobi', '09:00 AM - 01:00 PM', 'Field Action', 'Join us for a hands-on workshop on indigenous tree planting and nursery management.', '#0F4C3A', true),
-  (2, '12', 'FEB', '2026', 'Youth Policy Summit', 'Kenyatta ICC', '10:00 AM - 04:00 PM', 'Advocacy', 'A strategic gathering to discuss the Youth Climate Bill before the regional assembly.', '#2E86AB', true),
-  (3, '05', 'MAR', '2026', 'Eco-Literacy School Tour', 'Mombasa County', '08:30 AM - 02:00 PM', 'Education', 'Visiting regional schools to launch the 2026 Climate Champions program.', '#F4D35E', true),
-  (4, '20', 'MAR', '2026', 'Coastal Resilience Workshop', 'Malindi Waterfront', '09:00 AM - 12:00 PM', 'Field Action', 'Community seagrass monitoring and coastline protection training session.', '#0F4C3A', true)
+select
+  id,
+  to_char(event_date, 'DD'),
+  upper(to_char(event_date, 'Mon')),
+  to_char(event_date, 'YYYY'),
+  title,
+  location,
+  time,
+  type,
+  description,
+  color,
+  true
+from dated_events
 on conflict (id) do nothing;
 
 select setval(

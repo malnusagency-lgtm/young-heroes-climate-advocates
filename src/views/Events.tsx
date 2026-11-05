@@ -4,19 +4,29 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Calendar as CalendarIcon, MapPin, Clock, ChevronRight, Info, AlertCircle } from 'lucide-react';
 import { ROUTES } from '../config/routes';
-import { useEvents } from '../hooks/useEvents';
+import { isUpcomingEvent, sortEventsByDate, useEvents } from '../hooks/useEvents';
 import { EventItem } from '../types';
 
 export default function Events() {
   const { fetchAllEvents } = useEvents();
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [filter, setFilter] = useState('All');
 
   useEffect(() => {
-    fetchAllEvents().then(setEvents);
+    fetchAllEvents()
+      .then(setEvents)
+      .catch((error) => setLoadError(error instanceof Error ? error.message : 'Could not load events.'));
   }, [fetchAllEvents]);
 
-  const filteredEvents = events.filter((ev) => filter === 'All' || ev.type === filter);
+  const filteredEvents = sortEventsByDate(
+    events.filter(
+      (event) =>
+        event.is_published !== false &&
+        isUpcomingEvent(event) &&
+        (filter === 'All' || event.type === filter)
+    )
+  );
 
   return (
     <div
@@ -89,6 +99,11 @@ export default function Events() {
         </div>
 
         {/* Events Listing */}
+        {loadError && (
+          <p role="alert" style={{ textAlign: 'center', color: '#b91c1c', marginBottom: '1.5rem' }}>
+            Could not load events. Please try again later.
+          </p>
+        )}
         <div style={{ display: 'grid', gap: '2rem', maxWidth: '900px', margin: '0 auto' }}>
           {filteredEvents.map((ev) => (
             <div
@@ -238,4 +253,3 @@ export default function Events() {
     </div>
   );
 }
-

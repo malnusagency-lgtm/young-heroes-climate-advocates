@@ -10,6 +10,17 @@ import { Calendar, Plus, Edit2, Trash2, MapPin, Clock, X, Check } from 'lucide-r
 
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
+function getDefaultEventDate() {
+  const date = new Date();
+  date.setDate(date.getDate() + 1);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function getDefaultEventDateParts() {
+  const [year, month, day] = getDefaultEventDate().split('-');
+  return { date: String(Number(day)), month: MONTHS[Number(month) - 1], year };
+}
+
 function toDateInputValue(event: EventItem) {
   const month = MONTHS.indexOf(event.month.toUpperCase()) + 1;
   if (!month) return '';
@@ -27,13 +38,12 @@ function toDateInputValue(event: EventItem) {
 export default function EventsManager() {
   const { fetchAllEvents, createEvent, updateEvent, deleteEvent, loading } = useEvents();
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [eventDate, setEventDate] = useState('2026-04-15');
+  const [eventDate, setEventDate] = useState(getDefaultEventDate);
   const [formData, setFormData] = useState<Omit<EventItem, 'id'>>({
-    date: '15',
-    month: 'APR',
-    year: '2026',
+    ...getDefaultEventDateParts(),
     title: '',
     location: '',
     time: '09:00 AM - 01:00 PM',
@@ -43,8 +53,13 @@ export default function EventsManager() {
     is_published: true,
   });
 
-  const loadEvents = () => {
-    fetchAllEvents().then(setEvents);
+  const loadEvents = async () => {
+    setLoadError(null);
+    try {
+      setEvents(await fetchAllEvents());
+    } catch (error) {
+      setLoadError(error instanceof Error ? error.message : 'Could not load events.');
+    }
   };
 
   useEffect(() => {
@@ -53,11 +68,9 @@ export default function EventsManager() {
 
   const handleOpenAdd = () => {
     setEditingEvent(null);
-    setEventDate('2026-04-15');
+    setEventDate(getDefaultEventDate());
     setFormData({
-      date: '15',
-      month: 'APR',
-      year: '2026',
+      ...getDefaultEventDateParts(),
       title: '',
       location: '',
       time: '09:00 AM - 01:00 PM',
@@ -95,6 +108,10 @@ export default function EventsManager() {
     }
 
     const [year, month, day] = eventDate.split('-');
+    if (!year || !month || !day || !MONTHS[Number(month) - 1]) {
+      alert('Please choose a valid event date.');
+      return;
+    }
     const eventData = {
       ...formData,
       date: String(Number(day)),
@@ -152,8 +169,14 @@ export default function EventsManager() {
       {loading && events.length === 0 ? (
         <LoadingSpinner message="Loading events calendar..." />
       ) : (
-        <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
-          {events.map((ev) => (
+        <>
+          {loadError && (
+            <p role="alert" style={{ color: 'var(--color-error)', marginBottom: 'var(--space-4)' }}>
+              Could not load events: {loadError}
+            </p>
+          )}
+          <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
+            {events.map((ev) => (
             <div
               key={ev.id}
               style={{
@@ -261,8 +284,9 @@ export default function EventsManager() {
                 </button>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Modal for Add / Edit */}
