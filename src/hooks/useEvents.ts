@@ -142,20 +142,24 @@ export const useEvents = () => {
 
   const updateEvent = async (id: string | number, eventData: Partial<EventItem>) => {
     setLoading(true);
-    const current = getStoredEvents();
-    const updated = current.map((e) => (String(e.id) === String(id) ? { ...e, ...eventData } : e));
-    setStoredEvents(updated);
-
-    if (isSupabaseConfigured) {
-      try {
-        await supabase.from('events').update(eventData).eq('id', id);
-      } catch {
-        // Saved locally
+    try {
+      if (isSupabaseConfigured) {
+        const { error: updateError } = await supabase
+          .from('events')
+          .update(eventData)
+          .eq('id', id)
+          .select('id')
+          .single();
+        if (updateError) throw updateError;
       }
-    }
 
-    setLoading(false);
-    return updated.find((e) => String(e.id) === String(id));
+      const current = getStoredEvents();
+      const updated = current.map((e) => (String(e.id) === String(id) ? { ...e, ...eventData } : e));
+      setStoredEvents(updated);
+      return updated.find((e) => String(e.id) === String(id));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const deleteEvent = async (id: string | number) => {
@@ -185,4 +189,3 @@ export const useEvents = () => {
     deleteEvent,
   };
 };
-

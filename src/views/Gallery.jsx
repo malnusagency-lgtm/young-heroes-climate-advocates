@@ -15,12 +15,8 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { useGallery, INITIAL_FALLBACK_ITEMS, sanitizeItem } from '../hooks/useGallery';
-import { ORG } from '../config/constants';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
-
-const GOOGLE_DRIVE_URL =
-  ORG.googleDriveArchiveUrl ||
-  'https://drive.google.com/drive/folders/1mMI2p1uUds9mVDhOWG8ptW2g4HHDHnAn?usp=sharing';
 
 const VIEW_STYLES = [
   { id: 'feed', label: 'Feed', icon: Rows3 },
@@ -32,6 +28,7 @@ const PAGE_BASE = 5;
 
 export default function Gallery() {
   const { fetchPublishedGallery, loading } = useGallery();
+  const { settings } = useSiteSettings();
   const [photos, setPhotos] = useState(() => INITIAL_FALLBACK_ITEMS.map(sanitizeItem));
   const [selectedImg, setSelectedImg] = useState(null);
   const [filter, setFilter] = useState('All');
@@ -730,7 +727,7 @@ export default function Gallery() {
               }}
             >
               <a
-                href={GOOGLE_DRIVE_URL}
+                href={settings.googleDriveArchiveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn"
@@ -752,6 +749,27 @@ export default function Gallery() {
               >
                 <span>Browse More</span>
                 <ArrowUpRight size={18} />
+              </a>
+              <a
+                href={settings.googlePhotosAlbumUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                  padding: '0.95rem 2.4rem',
+                  color: '#fff',
+                  border: '1px solid rgba(255,255,255,0.65)',
+                  borderRadius: '10px',
+                  fontWeight: 800,
+                  textDecoration: 'none',
+                  minHeight: '48px',
+                }}
+              >
+                <span>Google Photos Album</span>
+                <ExternalLink size={18} />
               </a>
             </div>
           </div>
@@ -967,7 +985,7 @@ export default function Gallery() {
                   }}
                 >
                   <a
-                    href={GOOGLE_DRIVE_URL}
+                    href={settings.googleDriveArchiveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -981,6 +999,23 @@ export default function Gallery() {
                     }}
                   >
                     <span>Open in Google Drive</span>
+                    <ExternalLink size={14} />
+                  </a>
+                  <a
+                    href={settings.googlePhotosAlbumUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      color: 'var(--color-accent)',
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span>Google Photos Album</span>
                     <ExternalLink size={14} />
                   </a>
                 </div>

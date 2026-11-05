@@ -1,10 +1,61 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ORG, ADMIN_CREDENTIALS } from '../../config/constants';
-import { CheckCircle2, Shield, User, Globe, Mail } from 'lucide-react';
+import { CheckCircle2, Shield, User, Globe } from 'lucide-react';
+import { useSiteSettings } from '../../hooks/useSiteSettings';
+import FormField from '../forms/FormField';
+import Button from '../ui/Button';
 
 export default function SettingsPanel() {
+  const { settings, saveSettings, error, isSupabaseConfigured } = useSiteSettings();
+  const [draftSettings, setDraftSettings] = useState(settings);
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+
+  useEffect(() => {
+    setDraftSettings(settings);
+  }, [settings]);
+
+  const handleSaveLinks = async (event) => {
+    event.preventDefault();
+    setSaveMessage('');
+
+    const urls = [draftSettings.googleDriveArchiveUrl, draftSettings.googlePhotosAlbumUrl];
+    const isGoogleUrl = (value) => {
+      try {
+        const url = new URL(value);
+        return (
+          url.protocol === 'https:' &&
+          (url.hostname === 'google.com' ||
+            url.hostname.endsWith('.google.com') ||
+            url.hostname === 'photos.app.goo.gl')
+        );
+      } catch {
+        return false;
+      }
+    };
+
+    if (urls.some((url) => !isGoogleUrl(url))) {
+      setSaveMessage('Enter valid HTTPS links for Google Drive and Google Photos.');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      await saveSettings(draftSettings);
+      setSaveMessage(
+        isSupabaseConfigured
+          ? 'Google archive links updated on the website.'
+          : 'Links saved in this browser only. Configure Supabase to publish them for all visitors.'
+      );
+    } catch (saveError) {
+      setSaveMessage(`Could not save archive links: ${saveError.message}`);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div>
       <div style={{ marginBottom: 'var(--space-8)' }}>
@@ -24,7 +75,7 @@ export default function SettingsPanel() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', fontSize: 'var(--text-sm)' }}>
             <div><strong>Organization:</strong> {ORG.name} ({ORG.shortName})</div>
             <div><strong>Executive Lead:</strong> {ORG.founder}</div>
-            <div><strong>Contact:</strong> {ORG.email}</div>
+            <div><strong>Contact:</strong> <a href={`mailto:${ORG.email}`}>{ORG.email}</a></div>
             <div><strong>Regional Office:</strong> {ORG.address}</div>
           </div>
         </div>
@@ -50,37 +101,46 @@ export default function SettingsPanel() {
             <Globe size={22} color="var(--color-primary-600)" />
             <h2 style={{ fontSize: 'var(--text-base)' }}>Cloud Photo & Press Archive</h2>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', fontSize: 'var(--text-sm)' }}>
-            <div>
-              <span style={{ fontWeight: '600', display: 'block', fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', marginBottom: '2px' }}>
-                Public Google Drive Archive:
-              </span>
-              <a
-                href={ORG.googleDriveArchiveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: 'var(--color-primary-600)', wordBreak: 'break-all', fontSize: 'var(--text-xs)' }}
-              >
-                {ORG.googleDriveArchiveUrl}
-              </a>
-            </div>
-            <div>
-              <span style={{ fontWeight: '600', display: 'block', fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)', marginBottom: '2px' }}>
-                Public Google Photos Album:
-              </span>
-              <a
-                href={ORG.googlePhotosAlbumUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: 'var(--color-primary-600)', wordBreak: 'break-all', fontSize: 'var(--text-xs)' }}
-              >
-                {ORG.googlePhotosAlbumUrl}
-              </a>
-            </div>
+          <form onSubmit={handleSaveLinks}>
+            <FormField
+              label="Public Google Drive Archive"
+              name="googleDriveArchiveUrl"
+              type="url"
+              required
+              value={draftSettings.googleDriveArchiveUrl}
+              onChange={(event) =>
+                setDraftSettings({ ...draftSettings, googleDriveArchiveUrl: event.target.value })
+              }
+              placeholder="https://drive.google.com/..."
+            />
+            <FormField
+              label="Public Google Photos Album"
+              name="googlePhotosAlbumUrl"
+              type="url"
+              required
+              value={draftSettings.googlePhotosAlbumUrl}
+              onChange={(event) =>
+                setDraftSettings({ ...draftSettings, googlePhotosAlbumUrl: event.target.value })
+              }
+              placeholder="https://photos.app.goo.gl/..."
+            />
+            <Button type="submit" variant="primary" size="md" disabled={saving}>
+              {saving ? 'Saving…' : 'Save Google Links'}
+            </Button>
+            {saveMessage && (
+              <p role="status" style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-secondary)' }}>
+                {saveMessage}
+              </p>
+            )}
+            {error && (
+              <p role="alert" style={{ fontSize: 'var(--text-xs)', color: 'var(--color-error)' }}>
+                Could not load saved links: {error}
+              </p>
+            )}
             <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', margin: 0 }}>
-              Links are shown on the public Gallery page and Home page showcase. Configure in <code>src/config/constants.js</code>.
+              Google Drive and Photos links are displayed on the public Gallery page.
             </p>
-          </div>
+          </form>
         </div>
       </div>
 

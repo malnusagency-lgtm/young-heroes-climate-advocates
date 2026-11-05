@@ -6,7 +6,7 @@ import { isSupabaseConfigured } from '../config/supabase';
 import { ORG } from '../config/constants';
 import FormField from '../components/forms/FormField';
 import Button from '../components/ui/Button';
-import { CheckCircle, AlertCircle, MapPin } from 'lucide-react';
+import { CheckCircle, AlertCircle, MapPin, Mail } from 'lucide-react';
 
 const SUBJECT_OPTIONS = [
   'General Inquiry',
@@ -77,6 +77,17 @@ export default function Contact() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)' }}>
+            <div style={{ padding: 'var(--space-2)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-primary-100)', color: 'var(--color-primary-700)' }}>
+              <Mail size={20} />
+            </div>
+            <div>
+              <span style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', display: 'block' }}>Email</span>
+              <a href={`mailto:${ORG.email}`} style={{ fontSize: 'var(--text-sm)', color: 'var(--color-primary-700)', fontWeight: '500' }}>
+                {ORG.email}
+              </a>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)' }}>
               <div style={{ padding: 'var(--space-2)', borderRadius: 'var(--radius-md)', backgroundColor: 'var(--color-primary-100)', color: 'var(--color-primary-700)' }}>
                 <MapPin size={20} />
               </div>

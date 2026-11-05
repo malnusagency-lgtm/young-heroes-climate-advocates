@@ -8,11 +8,28 @@ import Button from '../ui/Button';
 import FormField from '../forms/FormField';
 import { Calendar, Plus, Edit2, Trash2, MapPin, Clock, X, Check } from 'lucide-react';
 
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+function toDateInputValue(event: EventItem) {
+  const month = MONTHS.indexOf(event.month.toUpperCase()) + 1;
+  if (!month) return '';
+
+  const value = `${event.year}-${String(month).padStart(2, '0')}-${String(event.date).padStart(2, '0')}`;
+  const parsed = new Date(`${value}T00:00:00`);
+  return !Number.isNaN(parsed.getTime()) &&
+    parsed.getFullYear() === Number(event.year) &&
+    parsed.getMonth() === month - 1 &&
+    parsed.getDate() === Number(event.date)
+    ? value
+    : '';
+}
+
 export default function EventsManager() {
   const { fetchAllEvents, createEvent, updateEvent, deleteEvent, loading } = useEvents();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [eventDate, setEventDate] = useState('2026-04-15');
   const [formData, setFormData] = useState<Omit<EventItem, 'id'>>({
     date: '15',
     month: 'APR',
@@ -36,6 +53,7 @@ export default function EventsManager() {
 
   const handleOpenAdd = () => {
     setEditingEvent(null);
+    setEventDate('2026-04-15');
     setFormData({
       date: '15',
       month: 'APR',
@@ -53,6 +71,7 @@ export default function EventsManager() {
 
   const handleOpenEdit = (ev: EventItem) => {
     setEditingEvent(ev);
+    setEventDate(toDateInputValue(ev));
     setFormData({
       date: ev.date,
       month: ev.month,
@@ -70,16 +89,24 @@ export default function EventsManager() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.location) {
-      alert('Please provide event title and location.');
+    if (!formData.title || !formData.location || !eventDate) {
+      alert('Please provide an event title, location, and date.');
       return;
     }
 
+    const [year, month, day] = eventDate.split('-');
+    const eventData = {
+      ...formData,
+      date: String(Number(day)),
+      month: MONTHS[Number(month) - 1],
+      year,
+    };
+
     try {
       if (editingEvent) {
-        await updateEvent(editingEvent.id, formData);
+        await updateEvent(editingEvent.id, eventData);
       } else {
-        await createEvent(formData);
+        await createEvent(eventData);
       }
       setIsModalOpen(false);
       loadEvents();
@@ -291,32 +318,14 @@ export default function EventsManager() {
                 placeholder="e.g. Coastal Mangrove Restoration Drive"
               />
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px' }}>
-                <FormField
-                  label="Day"
-                  name="date"
-                  required
-                  value={formData.date}
-                  onChange={(e: any) => setFormData({ ...formData, date: e.target.value })}
-                  placeholder="28"
-                />
-                <FormField
-                  label="Month"
-                  name="month"
-                  required
-                  value={formData.month}
-                  onChange={(e: any) => setFormData({ ...formData, month: e.target.value.toUpperCase() })}
-                  placeholder="JAN"
-                />
-                <FormField
-                  label="Year"
-                  name="year"
-                  required
-                  value={formData.year}
-                  onChange={(e: any) => setFormData({ ...formData, year: e.target.value })}
-                  placeholder="2026"
-                />
-              </div>
+              <FormField
+                label="Event Date"
+                name="eventDate"
+                type="date"
+                required
+                value={eventDate}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEventDate(e.target.value)}
+              />
 
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '10px' }}>
                 <FormField
@@ -387,4 +396,3 @@ export default function EventsManager() {
     </div>
   );
 }
-

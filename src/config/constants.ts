@@ -9,7 +9,7 @@ export const ORG = {
   shortName: 'YCHA',
   tagline: 'Empowering young people to lead climate action in their communities.',
   founder: 'Elizabeth Akinyi Ouma',
-  email: null as string | null,
+  email: 'info@yhca.com',
   phone: null as string | null,
   address: 'Kitengela, Kajiado County, Kenya',
   googleDriveArchiveUrl: 'https://drive.google.com/drive/folders/1mMI2p1uUds9mVDhOWG8ptW2g4HHDHnAn?usp=sharing',
@@ -105,4 +105,3 @@ export const DATE_FILTERS = [
   { label: 'Last 90 days', days: 90 },
   { label: 'All time', days: null as number | null },
 ];
-

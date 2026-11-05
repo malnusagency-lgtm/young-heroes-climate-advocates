@@ -137,7 +137,7 @@ export default function Home() {
       <header
         className="hero"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.40) 100%), url('/hero-bg.jpg')`,
+          backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.38) 0%, rgba(0, 0, 0, 0.58) 100%), url('/hero-bg.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           minHeight: '100vh',

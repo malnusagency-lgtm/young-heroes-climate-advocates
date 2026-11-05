@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ORG } from '../../config/constants';
 import { ROUTES } from '../../config/routes';
 import { supabase, isSupabaseConfigured } from '../../config/supabase';
-import { Facebook, Instagram, Twitter, Linkedin, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, MapPin, Mail } from 'lucide-react';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -153,6 +153,10 @@ export default function Footer() {
                 <MapPin size={20} color="#F4D35E" style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: '0.9rem' }}>Regional Youth Hub, <br />Kitengela, Kajiado County, Kenya</span>
               </li>
+              <li style={{ marginBottom: '1.2rem', opacity: 0.9, display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                <Mail size={20} color="#F4D35E" style={{ flexShrink: 0 }} />
+                <a href={`mailto:${ORG.email}`} style={{ color: 'white', fontSize: '0.9rem' }}>{ORG.email}</a>
+              </li>
             </ul>
 
             <div style={{ marginTop: '2rem', display: 'flex', gap: '1.2rem' }}>
@@ -241,4 +245,3 @@ export default function Footer() {
     </footer>
   );
 }
-
