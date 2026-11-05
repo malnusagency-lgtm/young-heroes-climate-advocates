@@ -1,0 +1,477 @@
+/* Google Fonts preconnected in layout.jsx for zero render-blocking */
+
+/* ============================================================
+   YCHA Design Tokens & Global Styles
+   ============================================================
+   Single source of truth for color, typography, spacing,
+   radius, shadows, breakpoints, and content width.
+   ============================================================ */
+
+:root {
+  /* --- Original Design Tokens --- */
+  --color-primary: #0F4C3A; /* Deep Forest Green */
+  --color-primary-light: #1A6B54;
+  --color-secondary: #2E86AB; /* Ocean Blue */
+  --color-accent: #F4D35E; /* Sunlight Yellow */
+  --color-alert: #E63946; /* Urgency Red */
+  --color-white: #FFFFFF;
+
+  /* --- Color: Primary (forest green) --- */
+  --color-primary-50: #e8f5ec;
+  --color-primary-100: #c8e6d0;
+  --color-primary-200: #a0d4a8;
+  --color-primary-300: #6fbd7e;
+  --color-primary-400: #45a85a;
+  --color-primary-500: #1a5632;
+  --color-primary-600: #174d2d;
+  --color-primary-700: #124025;
+  --color-primary-800: #0d331c;
+  --color-primary-900: #082614;
+
+  /* --- Color: Secondary (warm earth) --- */
+  --color-secondary-50: #fdf3e7;
+  --color-secondary-100: #f9debb;
+  --color-secondary-200: #f4c48a;
+  --color-secondary-300: #eeaa58;
+  --color-secondary-400: #e89530;
+  --color-secondary-500: #c17817;
+  --color-secondary-600: #a66512;
+  --color-secondary-700: #864f0e;
+  --color-secondary-800: #663b0a;
+  --color-secondary-900: #462806;
+
+  /* --- Color: Accent (sky blue) --- */
+  --color-accent-50: #e8f4fd;
+  --color-accent-100: #c5e2f9;
+  --color-accent-200: #9dcef5;
+  --color-accent-300: #6db8ef;
+  --color-accent-400: #42a4e8;
+  --color-accent-500: #2980b9;
+  --color-accent-600: #226a9c;
+  --color-accent-700: #1a5480;
+  --color-accent-800: #133e63;
+  --color-accent-900: #0c2947;
+
+  /* --- Color: Neutral (slate) --- */
+  --color-neutral-50: #f8f9fa;
+  --color-neutral-100: #f1f3f5;
+  --color-neutral-200: #e2e6ea;
+  --color-neutral-300: #ced4da;
+  --color-neutral-400: #adb5bd;
+  --color-neutral-500: #6c757d;
+  --color-neutral-600: #495057;
+  --color-neutral-700: #343a40;
+  --color-neutral-800: #212529;
+  --color-neutral-900: #121416;
+
+  /* --- Color: Semantic --- */
+  --color-success: #27ae60;
+  --color-warning: #f39c12;
+  --color-error: #c0392b;
+  --color-info: #2980b9;
+
+  /* --- Color: Background & Surface --- */
+  --color-bg: #fafaf8;
+  --color-bg-alt: #f1f3f0;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #4a5568;
+  --color-text-muted: #718096;
+  --color-border: #e2e6ea;
+  --color-border-light: #f1f3f5;
+
+  /* --- Typography --- */
+  --font-heading: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Open Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* --- Spacing (4px base) --- */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  /* --- Layout --- */
+  --content-width: 1200px;
+  --content-narrow: 720px;
+  --sidebar-width: 260px;
+
+  /* --- Border Radius --- */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.06);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+
+  /* --- Transitions --- */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* --- Z-index --- */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+    --transition-slow: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   Reset & Base
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+textarea,
+select {
+  font: inherit;
+  font-family: var(--font-body);
+  color: inherit;
+}
+
+button {
+  font-family: var(--font-heading);
+  cursor: pointer;
+  border: none;
+  color: inherit;
+}
+
+a {
+  color: var(--color-primary-500);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-primary-600);
+}
+
+/* --- Focus ring --- */
+:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
+
+/* --- Headings --- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: var(--leading-tight);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+h1 { font-size: var(--text-4xl); }
+h2 { font-size: var(--text-3xl); }
+h3 { font-size: var(--text-2xl); }
+h4 { font-size: var(--text-xl); }
+h5 { font-size: var(--text-lg); }
+h6 { font-size: var(--text-base); }
+
+/* --- Utility classes --- */
+.container {
+  width: 100%;
+  max-width: var(--content-width);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+.container--narrow {
+  max-width: var(--content-narrow);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* --- Section spacing --- */
+.section {
+  padding-block: var(--space-16);
+}
+
+.section--sm {
+  padding-block: var(--space-10);
+}
+
+.section--lg {
+  padding-block: var(--space-24);
+}
+
+/* --- Page heading --- */
+.page-header {
+  padding-block: var(--space-12) var(--space-8);
+  text-align: center;
+}
+
+.page-header h1 {
+  margin-bottom: var(--space-4);
+}
+
+.page-header p {
+  max-width: 600px;
+  margin-inline: auto;
+  color: var(--color-text-secondary);
+  font-size: var(--text-lg);
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-300);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-400);
+}
+
+/* ============================================================
+   Original UI & Layout Utility Classes
+   ============================================================ */
+
+.btn {
+  font-family: var(--font-heading);
+  display: inline-block;
+  padding: 0.75rem 1.7rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+/* Mobile Alignment Helpers */
+@media (max-width: 768px) {
+  .mobile-center {
+    text-align: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+  }
+}
+
+.mobile-only {
+  display: block;
+}
+
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Nav links typography */
+.nav-links a,
+.navbar a {
+  font-family: var(--font-heading);
+}
+
+/* ============================================================
+   SDG Alignment Marquee Animation
+   ============================================================ */
+.sdg-marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.sdg-marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: sdgMarquee 35s linear infinite;
+  will-change: transform;
+}
+
+.sdg-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.sdg-marquee-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+@keyframes sdgMarquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ============================================================
+   Mobile & Responsive Polish
+   ============================================================ */
+@media (max-width: 640px) {
+  .container {
+    padding-inline: 1rem;
+  }
+  .section {
+    padding-block: var(--space-10);
+  }
+  .section--lg {
+    padding-block: var(--space-16);
+  }
+  h1 { font-size: clamp(1.75rem, 6vw, 2.5rem); }
+  h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
+  h3 { font-size: clamp(1.25rem, 4vw, 1.6rem); }
+}
+
+/* Ensure text is never hidden during font load or animation */
+body, h1, h2, h3, h4, h5, h6, p, span, a, button {
+  text-rendering: optimizeLegibility;
+}
+
+
+
